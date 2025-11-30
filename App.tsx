@@ -81,6 +81,21 @@ function MainApp() {
   const isStopped = useRef(false);
   const bottomRef = useRef<HTMLDivElement>(null);
 
+  // Close menus when clicking outside (handled by global click listener or overlays)
+  // The overlays in the JSX handle this for now, but we can add a global listener if needed.
+  // Currently the transparent absolute/fixed overlays do this job.
+  // Adding a specific effect to handle 'Escape' key for better a11y
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsSessionMenuOpen(false);
+        setIsToolsMenuOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
+  }, []);
+
   // Sync Graphs
   useEffect(() => {
     if (isAuthenticated && graphs && graphs.length > 0 && !activeGraphId) {
@@ -303,7 +318,7 @@ function MainApp() {
       <header className="fixed top-0 left-0 right-0 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md border-b border-zinc-100 dark:border-zinc-800 z-40 h-14 flex items-center justify-between px-4 lg:px-8 transition-colors duration-500">
         
         {/* Left: Logo & Session Switcher */}
-        <div className="flex items-center gap-3 min-w-0">
+        <div className="flex items-center gap-1.5 sm:gap-3 min-w-0">
           <Link to="/" className="shrink-0">
             <Logo className="text-zinc-900 dark:text-white w-8 h-8" />
           </Link>
@@ -312,7 +327,7 @@ function MainApp() {
           <div className="relative">
             <button 
               onClick={() => setIsSessionMenuOpen(!isSessionMenuOpen)}
-              className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors w-[160px] sm:w-[240px]"
+              className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors w-[180px] sm:w-[240px]"
             >
               <span className="text-sm font-bold text-zinc-900 dark:text-white truncate flex-1 text-left">
                 {graphs?.find((g: any) => g._id === activeGraphId)?.title || "IdeaNodes"}
