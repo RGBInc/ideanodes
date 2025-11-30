@@ -1,0 +1,7 @@
+{
+  "name": "Ideanodes",
+  "description": "A node-based sequential thinking tool that allows you to structure, visualize, and remix thought patterns using AI.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
