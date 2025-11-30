@@ -95,27 +95,6 @@ function MainApp() {
     ? (convexNodes || []).map((n: any) => ({ ...n, id: n._id })) 
     : localNodes;
 
-  // Auto-Name Session on First Node
-  useEffect(() => {
-    const autoNameSession = async () => {
-      if (isAuthenticated && activeGraphId && nodes.length > 0) {
-        const currentGraph = graphs?.find(g => g._id === activeGraphId);
-        if (currentGraph && currentGraph.title === "New Idea Session") {
-          const firstNode = nodes[0];
-          // Check if content is meaningful (not default and sufficient length)
-          if (firstNode.content && 
-              !firstNode.content.includes(INITIAL_NODE.content) && 
-              firstNode.content.length > 10) {
-             await startGenerateTitle({ graphId: activeGraphId, content: firstNode.content });
-          }
-        }
-      }
-    };
-    
-    const timer = setTimeout(autoNameSession, 2000);
-    return () => clearTimeout(timer);
-  }, [nodes, activeGraphId, graphs, isAuthenticated, startGenerateTitle]);
-
   // Theme & Audio
   useEffect(() => {
     const root = window.document.documentElement;
@@ -211,6 +190,14 @@ function MainApp() {
       // Auto-title node if content is sufficient and title is default
       if ((newTitle === 'New Node' || !newTitle) && newContent.length > 10) {
          startGenerateNodeTitle({ nodeId: id as any, content: newContent });
+      }
+
+      // Auto-title Session if this is the first node and session is default
+      if (nodes.length > 0 && nodes[0].id === id && activeGraphId) {
+        const currentGraph = graphs?.find(g => g._id === activeGraphId);
+        if (currentGraph && currentGraph.title === "New Idea Session" && newContent.length > 10) {
+           startGenerateTitle({ graphId: activeGraphId, content: newContent });
+        }
       }
       
     } else {
