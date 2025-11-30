@@ -81,20 +81,48 @@ function MainApp() {
   const isStopped = useRef(false);
   const bottomRef = useRef<HTMLDivElement>(null);
 
-  // Close menus when clicking outside (handled by global click listener or overlays)
-  // The overlays in the JSX handle this for now, but we can add a global listener if needed.
-  // Currently the transparent absolute/fixed overlays do this job.
-  // Adding a specific effect to handle 'Escape' key for better a11y
+  const sessionMenuRef = useRef<HTMLDivElement>(null);
+  const toolsMenuRef = useRef<HTMLDivElement>(null);
+  const sessionButtonRef = useRef<HTMLButtonElement>(null);
+  const toolsButtonRef = useRef<HTMLButtonElement>(null);
+
+  // Close menus when clicking outside
   useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      // Session Menu
+      if (isSessionMenuOpen && 
+          sessionMenuRef.current && 
+          !sessionMenuRef.current.contains(event.target as Node) &&
+          sessionButtonRef.current &&
+          !sessionButtonRef.current.contains(event.target as Node)) {
+        setIsSessionMenuOpen(false);
+      }
+
+      // Tools Menu
+      if (isToolsMenuOpen && 
+          toolsMenuRef.current && 
+          !toolsMenuRef.current.contains(event.target as Node) &&
+          toolsButtonRef.current &&
+          !toolsButtonRef.current.contains(event.target as Node)) {
+        setIsToolsMenuOpen(false);
+      }
+    };
+
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         setIsSessionMenuOpen(false);
         setIsToolsMenuOpen(false);
       }
     };
+
+    document.addEventListener('mousedown', handleClickOutside);
     window.addEventListener('keydown', handleEsc);
-    return () => window.removeEventListener('keydown', handleEsc);
-  }, []);
+    
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      window.removeEventListener('keydown', handleEsc);
+    };
+  }, [isSessionMenuOpen, isToolsMenuOpen]);
 
   // Sync Graphs
   useEffect(() => {
@@ -326,6 +354,7 @@ function MainApp() {
           {/* Session Dropdown (Desktop & Mobile) */}
           <div className="relative">
             <button 
+              ref={sessionButtonRef}
               onClick={() => setIsSessionMenuOpen(!isSessionMenuOpen)}
               className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors w-[180px] sm:w-[240px]"
             >
@@ -337,8 +366,8 @@ function MainApp() {
 
             {isSessionMenuOpen && (
               <>
-                <div className="fixed inset-0 z-30" onClick={() => setIsSessionMenuOpen(false)}></div>
-                <div className="absolute top-full left-0 mt-2 w-72 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-xl py-2 z-40 animate-in fade-in slide-in-from-top-2 duration-200 max-h-[60vh] overflow-y-auto">
+                {/* Overlay removed in favor of useClickOutside hook for cleaner interaction */}
+                <div ref={sessionMenuRef} className="absolute top-full left-0 mt-2 w-72 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-xl py-2 z-40 animate-in fade-in slide-in-from-top-2 duration-200 max-h-[60vh] overflow-y-auto">
                   <div className="px-4 py-2 text-xs font-semibold text-zinc-500 uppercase tracking-wider flex justify-between items-center">
                     <span>Your Sessions</span>
                   </div>
@@ -430,6 +459,7 @@ function MainApp() {
           {/* Tools Menu (Mobile Only - replaces individual icons) */}
           <div className="md:hidden relative">
             <button 
+              ref={toolsButtonRef}
               onClick={() => setIsToolsMenuOpen(!isToolsMenuOpen)}
               className="p-2 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg"
             >
@@ -438,8 +468,8 @@ function MainApp() {
             
             {isToolsMenuOpen && (
               <>
-                <div className="fixed inset-0 z-40" onClick={() => setIsToolsMenuOpen(false)}></div>
-                <div className="absolute top-full right-0 mt-2 w-56 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-xl py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                {/* Overlay removed in favor of useClickOutside hook */}
+                <div ref={toolsMenuRef} className="absolute top-full right-0 mt-2 w-56 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-xl py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
                   <button onClick={() => { setIsImportModalOpen(true); setIsToolsMenuOpen(false); }} className="w-full text-left px-4 py-2.5 text-sm flex items-center gap-3 hover:bg-zinc-50 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300">
                     <FileInput size={16} /> Import Text
                   </button>
