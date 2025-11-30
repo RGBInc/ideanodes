@@ -46,7 +46,7 @@ const GraphView: React.FC<GraphViewProps> = ({ nodes }) => {
       </div>
 
       {/* Zoom Controls */}
-      <div className="absolute bottom-4 right-4 flex flex-col gap-2 bg-white dark:bg-zinc-900 p-2 rounded-lg shadow-lg border border-zinc-200 dark:border-zinc-800 z-20">
+      <div className="absolute top-4 right-4 flex flex-col gap-2 bg-white dark:bg-zinc-900 p-2 rounded-lg shadow-lg border border-zinc-200 dark:border-zinc-800 z-20">
         <button 
           onClick={() => setScale(s => Math.min(s + 0.1, 2))}
           className="p-2 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-md transition-colors"
