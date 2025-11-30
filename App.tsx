@@ -312,12 +312,12 @@ function MainApp() {
           <div className="relative">
             <button 
               onClick={() => setIsSessionMenuOpen(!isSessionMenuOpen)}
-              className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors max-w-[200px] sm:max-w-xs"
+              className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors w-[160px] sm:w-[240px]"
             >
-              <span className="text-sm font-bold text-zinc-900 dark:text-white truncate">
+              <span className="text-sm font-bold text-zinc-900 dark:text-white truncate flex-1 text-left">
                 {graphs?.find((g: any) => g._id === activeGraphId)?.title || "IdeaNodes"}
               </span>
-              <ChevronDown size={14} className={`text-zinc-400 transition-transform ${isSessionMenuOpen ? 'rotate-180' : ''}`} />
+              <ChevronDown size={14} className={`text-zinc-400 transition-transform shrink-0 ${isSessionMenuOpen ? 'rotate-180' : ''}`} />
             </button>
 
             {isSessionMenuOpen && (
@@ -327,6 +327,15 @@ function MainApp() {
                   <div className="px-4 py-2 text-xs font-semibold text-zinc-500 uppercase tracking-wider flex justify-between items-center">
                     <span>Your Sessions</span>
                   </div>
+
+                  <button 
+                    onClick={handleCreateSession}
+                    className="w-full text-left px-4 py-3 text-sm text-indigo-600 dark:text-indigo-400 hover:bg-zinc-50 dark:hover:bg-zinc-800 flex items-center gap-2 font-medium"
+                  >
+                    <Plus size={16} /> New Session
+                  </button>
+
+                  <div className="h-px bg-zinc-100 dark:bg-zinc-800 my-1" />
                   
                   {graphs?.map((graph: any) => (
                     <div 
@@ -379,15 +388,6 @@ function MainApp() {
                       )}
                     </div>
                   ))}
-
-                  <div className="h-px bg-zinc-100 dark:bg-zinc-800 my-1" />
-                  
-                  <button 
-                    onClick={handleCreateSession}
-                    className="w-full text-left px-4 py-3 text-sm text-indigo-600 dark:text-indigo-400 hover:bg-zinc-50 dark:hover:bg-zinc-800 flex items-center gap-2 font-medium"
-                  >
-                    <Plus size={16} /> New Session
-                  </button>
                 </div>
               </>
             )}
