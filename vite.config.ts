@@ -57,6 +57,9 @@ export default defineConfig(({ mode }) => {
       alias: {
         '@': path.resolve(__dirname, '.'),
       }
+    },
+    server: {
+      allowedHosts: ['sb-32835xb2x8f4.vercel.run']
     }
   };
 });
